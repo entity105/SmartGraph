@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 from windows.base_window import BaseWindow
 
 class MenuWindow(BaseWindow):
@@ -22,8 +23,10 @@ class MenuWindow(BaseWindow):
                               height=1, **base_setting)
         btn_graph.pack(pady=8)
 
-        btn_file = tk.Button(center_frame, text=f"Выбрать файл\n(Выбрано: {"________"})",
-                             height=2, **base_setting)
+        btn_file = tk.Button(center_frame,
+                             text=f"Выбрать файл\n(Выбрано: "
+                                  f"{os.path.basename(self.manager.current_file) if self.manager.current_file else None})",
+                             height=2, command=self.manager.show_file_setting_win, **base_setting)
         btn_file.pack()
 
         btn_upload = tk.Button(center_frame, text="Выгрузить данные", height=1, **base_setting)
@@ -32,4 +35,7 @@ class MenuWindow(BaseWindow):
         btn_exit = tk.Button(center_frame, text="Выход", command=self.exit_program,
                              height=1, **base_setting)
         btn_exit.pack()
+
+        
+
 

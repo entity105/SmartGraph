@@ -14,6 +14,7 @@ class GraphInterface(BaseWindow):
 
         self.fig, self.ax = None, None
         self.canvas = None
+        self.scatter = None
         self.draw_graph()
 
     def setup(self):
@@ -33,13 +34,25 @@ class GraphInterface(BaseWindow):
 
         btn_change = tk.Button(buttons_frame, text="Изменить данные", font=("Arial", 15, "bold"),
                                command=self.manager.show_change_data_win)
-        btn_change.pack(anchor='s', pady=100)
+        btn_change.pack(anchor='s', pady=30)
+
+        # btn_file = tk.Button(buttons_frame, text="Выбрать файл", font=("Arial", 15, "bold"),
+        #                      command=self.manager.show_file_setting_win)
+        # btn_file.pack()
+
+        if self.current_file:
+            file_info = tk.Label(buttons_frame, text=f"Текущий файл: {self.current_file}", font=("Arial", 12, "bold"))
+        else:
+            file_info = tk.Label(buttons_frame, text="Выберите файл", fg="#700314", bg="#f6afb5")
+        file_info.pack()
 
         btn_exit = tk.Button(buttons_frame, text="Выход", font=("Arial", 15, "bold"),
                              command=self.exit_program)
         btn_exit.pack(side=tk.BOTTOM, pady=5)
 
     def save_data(self):
+        if not self.current_file:
+            return
         data_row = self.input_field.get()
         if data_row.strip():
             print(f"Введено: {data_row}")
@@ -82,13 +95,17 @@ class GraphInterface(BaseWindow):
         df = pd.read_csv(path)
         x = df.iloc[:, 0].values
         y = df.iloc[:, 1].values
+
+        if self.scatter:
+            self.scatter.remove()
+
         if hasattr(self, 'line'):
             self.line.set_data(x, y)
             self.ax.relim()
             self.ax.autoscale()
         else:
             self.line, = self.ax.plot(x, y)
-        self.ax.scatter(x, y, color='red')
+        self.scatter = self.ax.scatter(x, y, color='red')
         self.canvas.draw()
 
     def draw_graph(self):
@@ -101,9 +118,12 @@ class GraphInterface(BaseWindow):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        self.update_graph(self.current_file)
+        if self.current_file:
+            self.update_graph(self.current_file)
 
     def close_win(self):
         super().close_win()
         plt.close('all')
         self.manager.show_menu_win()
+
+    # def open_file_selector(self):
