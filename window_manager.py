@@ -14,7 +14,7 @@ class WindowManager:
     @staticmethod
     def load_file_path():
         try:
-            with open("__last_file.txt", "r") as f:
+            with open("dist.__last_file.txt", "r", encoding="utf-8") as f:
                 return f.read().strip()
         except FileNotFoundError:
             return None
@@ -47,6 +47,3 @@ class WindowManager:
 
     def show_edit_file_win(self):
         self.show_window(EditFileInterface)
-
-i = WindowManager()
-i.show_menu_win()
